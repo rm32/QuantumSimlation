@@ -1,0 +1,7 @@
+The algorithm is implemented using three classes: \emph{DeutschJoszaAlgorithm}, which contains the main algorithm set up; \emph{DeutschJoszaOracle}, which is the quantum gate representing (\( U_f \)) and contains the function; and \emph{DeutschJoszaOutput}, which contains the result, i.e. whether the function is constant or balanced.
+
+When creating the oracle, the user can decide whether to create a constant or a balanced function. There are several balanced functions implemented, but the code needs to be changed to access them, as one balanced function is enough to demonstrate the algorithm.
+
+The whole structure of the simulation is very close to the real implementation. Hadamard gates are applied to all qubits and then the \emph{DeutschJoszaOracle} gate (the transform \begin{math} U_f \end{math}) is applied to the whole register consisting of the \emph{n} input qubits and the additional output qubit. Only one \emph{QRegister} containing n+1 qubits is used.
+
+The oracle gate uses direct bit manipulation and no matrix representation. The function \( f : \{0,1\}^n \to \{ 0,1 \} \) is separated from the apply-method (which represents \( U_f \) ), so it can be easily changed.

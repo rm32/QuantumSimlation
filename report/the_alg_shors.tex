@@ -1,0 +1,79 @@
+In the previous sections we have looked at two algorithms, Deutsch-Josza and Grover's: these have no real applications. In this section Shor's algorithm will be examined and its applications considered.
+
+Shor's algorithm factors a number into its primes. It works for all odd composite numbers noting that an even number always has 2 as a prime factor, so can be continually divided by 2 until it is odd. Then Shor's algorithm can be applied to find some other factors. This means any number can be factored into its primes.
+
+On a classical computer factoring prime numbers is currently very slow. With the best classical algorithms available one can currently factor a number into it’s primes in sub-exponential time\footnote{This means the algorithm still slows down faster than a polynomial rate but is significantly faster than an exponentially growing algorithm}.  Shor's algorithm uses the fact that a quantum register can be in a superposition of various states. So a gate acting on the quantum register will essentially calculate a superposition of states corresponding to the superposition of states put into the gate and the particular function of the gate. Furthermore it is easy for one to put a quantum register into a superposition of all it’s possible states by applying the quantum Fourier transform to a quantum register in the state \(\ket{0}\). 
+
+Currently a lot of security, namely RSA encryption relies on the fact that it is hard to factor a number into its prime factors, using a classical computer. It is used everywhere in modern cryptography, as part of a key exchange and authentication protocols, which in turn is used everywhere in network security. One can imagine it would be disastrous if there was an easy way to compromise this security with many internet services relying on it, such as online banking and commerce. So far it has only been possible to factor up to 15 \cite{expdemo,demoshor}, so RSA is very unlikely to be compromised due to Shor's algorithm currently.
+
+Factoring a number \emph{N}, into it’s primes can be accomplished by choosing a random number that is relatively prime to N and then finding P (the period of the function) such that P satisfies:
+
+\begin{equation}
+ m^P = 1 \bmod N
+\end{equation}
+
+Where m is a randomly generated positive integer.
+
+After generating a value of m one should construct two quantum registers, the first with L qubits where L is determined from the expression 
+
+\begin{equation}
+ N^2=Q=2^L=2N^2
+\end{equation}
+
+This will store the values of the arguments of the function 
+
+\begin{equation}
+ x \rightarrow m^x \bmod N
+\end{equation}
+
+
+The second quantum register will have \(\log_2 N\) qubits. It will store the values of the function for the corresponding arguments in the first quantum register. Initially the quantum registers should be set such that the first one is in state \( \ket{0000\ldots 00} \) and the second one in the state \( \ket{0000\ldots 01} \), or in states \( \ket{\mathbf{0}} \) and \( \ket{\mathbf{1}} \) in decimal notation.
+
+Now applying the Quantum Fourier transform to the first register it becomes a superposition of all the possible states the quantum register can be in: this is done in preparation for the next step. This leaves the system in the state 
+
+\begin{equation}
+ \frac{1}{\sqrt{2^L}}\sum_{x=0}^{2^L} \ket{x}\ket{1}
+\end{equation}
+
+\begin{equation}
+ \ket{x}\ket{1} \rightarrow \ket{x}\ket{m^x \bmod N}
+\end{equation}
+
+Applying the above gate to the above state, you obtain two quantum registers: the first containing the arguments of the function and the second containing the values of the function.
+
+Finally the Fourier transform is applied to register number one again to give the final state of the system Register number one is then measured giving a value \emph{y} which can be used to find the period of the function.
+
+Using this value of y the period of the function can be found using continued fractions \cite{lomo2002}. This involves dividing the output by the size of the first quantum register (note, this is the basis size not the number of qubits, so \(2^n\)), then finding the convergent of the continued fraction and testing the denominator to see if it satisfies the expression for the  period \(m^p = 1 \bmod N \). If the convergent becomes 0, without obtaining the period then you have to start again.  Also note that this part can be done on a classical computer, after the measurement the quantum computer is no longer needed. 
+
+Next we need to check if the period is even: if it is we can carry on, if not then unfortunately one has to rerun the algorithm from the start, with a new value of m.
+
+\begin{equation}
+ m^p = 1 \bmod N
+\end{equation}
+
+It is obvious that the expression above is satisfied. Therefore subtracting one from both sides gives.
+
+\begin{equation}
+ m^p-1 = 0 \bmod N 
+\end{equation}
+
+It is also required that the period has to be even, so the expression can be factored to give.
+
+\begin{equation}
+ (m^{\frac{p}{2}}+1)(m^{\frac{p}{2}}-1)=0 \bmod N
+\end{equation}
+
+If either factor is equal to 0 then the other can be any number, so we require that both are non-zero. If this requirement is not fulfilled then one has to rerun the algorithm from the start.
+
+If both are non-trivial factors (i.e. neither is zero) then we have the two factors being some factors of some multiple of N. Therefore calculating the greatest common divisor of one of the  factors and N (which can be done easily using Euclid's algorithm) we can obtain one of the factors, then the other can be found simply by dividing N by the first factor.
+
+\begin{equation}
+ factor1 = \gcd(m^{\frac{p}{2}}\pm1,N) 
+\end{equation}
+
+\begin{equation}
+factor2 = \frac{N}{factor1} 
+\end{equation}
+
+
+The reason Shor's algorithm works is due to the Quantum Fourier Transform applied the second time. The values of x that correctly give the period of the function add up (interfere) constructively. This is due to the fact that the coefficients (\(\omega^{i x}\)) in the quantum Fourier transform are roots of unity, and therefore are a cyclic group. If one imagines these roots on the complex plane, one can see that the values of \(\omega^{iP} \) are all the same so the amplitudes add constructively giving a large amplitude when the Fourier transform is applied.  The values of x that are not periods of the function add up (interfere) “destructively”, this is due to the fact that when the Fourier transform is applied \(\omega^{ix} \) will be different roots of unity, therefore summing over them will give zero. This means when the register is measured with a high probability the output will be a value such that it can be used to find the period.

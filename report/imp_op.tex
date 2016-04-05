@@ -1,0 +1,30 @@
+In our simulator operators are defined by a single interface in the \emph{Core} package, they are declared to have two methods. The first method general to all operators is that they can be applied to a \emph{QRegister} object; the implementation of this method is dependent on the gate. The second method is an apply method to create a special operator type, \emph{CompositeOperator}, this method is general to the extent that it simply acts on the \emph{Operator} interface and needs no specific information about the implementation of \emph{Operator} it is acting on. By using the \emph{CompositeOperator} to create a tree of \emph{Operators} it is possible to have a single \emph{CompositeOperator} represent entire circuits.
+
+We implemented many common operators that come up in quantum computing such as the \emph{Hadamard} operator, \emph{controlled-V} operator, \emph{phase shift} operator and more. Since the implementation of the operators is left to a subclass in the design most operators were designed to be an abstract class implementing the \emph{Operator} interface. All operators have their individual packages within the \emph{Operators} package and are implemented with either a matrix multiplication, a bit manipulation or a composite of other operators. Parameters required, such as target bit location or control bit location, are accepted through constructors of the base classes. As an alternative to a bit assignment operator an \emph{Operator} is completely responsible for required input and validity of it. This behaviour was chosen, because a bit assignment operator would allow for a generic operator to be applied to a \emph{QRegister} without information needed for functionality of that operator.
+
+\begin{figure}
+	\centering
+
+	\begin{tabular}{ | c || c | c | c | }
+		\hline
+		Operator & Matrix & Bit Manipulation & Composite \\
+		\hline
+		\hline
+		Hadamard & \checkmark & \checkmark & \\
+		\hline
+		Phase & \checkmark & \checkmark & \\
+		\hline
+		cV & \checkmark & \checkmark & \\
+		\hline
+		Swap &  & \checkmark & \\
+		\hline
+		CNot & \checkmark & \checkmark &  \checkmark \\
+		\hline
+		CCNot & & & \checkmark \\
+		\hline
+	\end{tabular}
+
+	\caption{ Operator implementations }	
+\end{figure}
+
+The matrix implementation of an operator involves storing a matrix in a defined order of bases, representing the specific transform to the \emph{QRegister} object that is performed. This buffered matrix is then multiplied with the \emph{ComplexVector} representing the \emph{QRegister} and transforms it into a \emph{ComplexVector} with the operator applied. Since most operators are sparse a matrix is very wasteful in memory\footnote{Memory usage of \emph{DenseMatrix} is O(\(2^{2n}\))} and clock cycles, where n is the number of qubits, even when our \emph{SparseMatrix} implementation is used. The matrix multiplication is the analytic method of computing a quantum result. As an alternative to matrix multiplication, a bit manipulation method was devised for most operators. This involves stepping through all bases in a \emph{QRegister} object and using the specific basis index to implement the equivalent transform that is applied by the matrix multiplication. This method leads to a much less memory intensive operator structure and to a O(\(N\)) complexity of the operators, where N is the number of bases, compared to the O(\(N^3\)) matrix multiplication complexity; therefore large \emph{QRegisters} are easily handled compared to when matrices are used. The last method of implementation was to compose complex operators of simpler operators that act as a universal set of gates to a quantum computer. Specifically the \emph{controlled-V} gate was implemented to allow a mathematically elegant universal set with \emph{Hadamard} operators\cite{ekert2000}. The \emph{CNotCompositeOperator} and \emph{CCNotCompositeOperator} were both implemented in such a fashion to demonstrate this concept. Using the bit manipulation implementations of the universal set operators, a very efficient method arose to generate complex operators such as the \emph{CCNot} (Toffoli) operator. 

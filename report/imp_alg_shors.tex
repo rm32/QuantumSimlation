@@ -1,0 +1,38 @@
+We will now discuss how Shor's algorithm was implemented. We will initially talk about how the quantum part of the algorithm was implemented, and will move on to discuss how the classical part was implemented.
+
+The quantum part of Shor's algorithm requires two gates: the Quantum Fourier Transform gate and the gate which applies the transform below
+
+\begin{equation}
+ \ket{x}\ket{1} \rightarrow \ket{x}\ket{m^x \bmod N}
+\end{equation}
+
+We chose to implement the Quantum Fourier Transform directly as a matrix, rather than using gates, as the matrix requires one initial calculation of omega and then omega raised to powers. It can be seen that the number of complex multiplications is
+
+\begin{equation}
+ ComplexMultiplications = \sum_{i,j=1} (i \cdot j) - 1
+\end{equation}
+
+\begin{equation}
+ QFT_{2}=\begin{pmatrix}1 & 1 &1 &1 \\ 
+ 1 & \omega & \omega^{2} & \omega^{3} \\
+ 1 & \omega^{2} & \omega^{4} & \omega^{6} \\
+ 1 & \omega^{3} & \omega^{6} & \omega^{9} \end{pmatrix}
+\end{equation}
+
+Now, examining the gate construction, it is clear that  tensor products are required to calculate just the action of the first Hadamard gate, as a sparse matrix is not implemented in the gates  
+
+\begin{equation}
+ V =\sum_{l=0}^{p-2} k^{2(p-l)}
+\end{equation}
+
+Complex multiplications are required, where k is the order of the matrices (in this case 2) and p is the number of matrices being tensor produced together (which for Shor’s algorithm is Q). It is clear this is exponentially growing  (just from the first gate in the circuit), therefore creating the matrix from the methods above rather than gates is a much more efficient way to obtain the QFT. Hence this was used it in the simulation.
+
+The gate that applies the transform \( \ket{x}\ket{1}\rightarrow\ket{x}\ket{m^x \bmod N} \)  was done simply by taking  the tensor product of the two quantum register state vectors, iterating through the possible values the first quantum register can hold, calculating the corresponding value of the function and setting the corresponding  components of the combined state vector to 1\footnote{As a quantum register is normalized when it is measured}.  It was decided to implement it this way as it was found to be very conceptually hard implementing this using just gates or a generating a matrix (if either is even possible for all n and m). We felt that a \emph{for} loop would be fine, and most likely would be faster than generating a matrix directly or using gates, then using matrix vector multiplication on the state vector.
+
+The classical part was implemented directly in the Shor's algorithm method rather than in a separate class. It was chosen to implement it this way as it seems there are no other methods to reduce the quantum output to the period that is used: there was no need to separate it out, so it could easily be replaced.
+
+In the algorithm above you can see there are many places the method could fail. For example: if the period is odd or  \( m^ {\frac{p}{2}}\pm1=0 \). To deal with this issue recursive relationships have been set up such that if the period fails to  satisfy one of its requirements, a message is printed out to the terminal saying it has failed. Then the output value for the method is set to the output of the method. This seems to have dealt with the problem in an elegant way however there is now risk of stack overflow occurring. This should not be an issue as Shor’s algorithm should find factors much quicker than the processor runs out of stack space.
+
+During the testing process it was discovered that \emph{ints} were not large enough in the classical part, it was therefore decided to use \emph{BigIntegers} in the classical part.
+
+Finally, If there was more time, a GUI could have been implemented to draw the probability distribution of the final state of the system to see which values are more likely. This would give a better understanding of how Shor's algorithm works and would allow us to check that the quantum part of the algorithm is working correctly easily.

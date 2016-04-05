@@ -1,0 +1,17 @@
+\contentsline {section}{\numberline {1}Introduction}{1}
+\contentsline {section}{\numberline {2}Theory}{1}
+\contentsline {subsection}{\numberline {2.1}Basics of Quantum Computation}{1}
+\contentsline {subsection}{\numberline {2.2}Algorithms}{4}
+\contentsline {subsubsection}{\numberline {2.2.1}Deutsch-Jozsa Algorithm}{4}
+\contentsline {subsubsection}{\numberline {2.2.2}Grover's Algorithm}{5}
+\contentsline {subsubsection}{\numberline {2.2.3}Shor's Algorithm}{8}
+\contentsline {section}{\numberline {3}Implementation}{11}
+\contentsline {subsection}{\numberline {3.1}Design}{11}
+\contentsline {subsection}{\numberline {3.2}Core}{13}
+\contentsline {subsection}{\numberline {3.3}Operators}{13}
+\contentsline {subsection}{\numberline {3.4}Algorithms}{14}
+\contentsline {subsubsection}{\numberline {3.4.1}Deutsch-Jozsa Algorithm}{14}
+\contentsline {subsubsection}{\numberline {3.4.2}Grover's Algorithm}{15}
+\contentsline {subsubsection}{\numberline {3.4.3}Shor's Algorithm}{16}
+\contentsline {section}{\numberline {4}Discussion}{17}
+\contentsline {section}{\numberline {5}Conclusion}{18}

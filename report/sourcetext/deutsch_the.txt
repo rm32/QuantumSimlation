@@ -1,0 +1,29 @@
+Deutsch-Josza Algorithm – Theory
+The Deutsch algorithm was originally set up for one qubit by Deutsch in 1985 and then generalized for any number of qubits by Deutsch and Josza in 1992 [2]. The algorithm has since then been improved by R. Cleve et al., which is the version that is discussed here and which was implemented in the simulation [1].
+The Deutsch-Josza algorithm determines whether a function \begin{math} f : \{0,1\}^n \to \{ 0,1 \} \end{math} inside a quantum computer oracle is balanced or constant. If the function is constant, it will return either 0 or 1 for all possible inputs \begin{math} \{0,1\} ^n \end{math}. If the function is balanced, it will return 0 for exactly \begin{math} 2^{n-1} combinations of \begin{math} \{0,1 \} ^n \end{math} and 1 for the other \begin{math}  2^{n-1} \end{math} combinations. The function is promised to be either constant or balanced and nothing else about it is known, it thus serves as a black-box. The internal structure of the function is irrelevant as long as it is either constant or balanced [1][3].
+In the worst case a classical computer would have to evaluate \begin{math} 2^{n-1}+1 \end{math} combinations of \begin{math} \{0,1}}^n \end{math} to get a deterministic answer (less for an answer with some uncertainty). The quantum algorithm however only needs a single evaluation to distinguish whether the function is constant or balanced and is thus exponentially faster than a classical computer.
+The quantum mechanical function evaluation is implemented as a unitary transformation acting on the quantum register, or rather its states. There are n input (control) qubits (the input to the function) and an addition (target) qubit to store the result of the evaluation \begin{math} U_f|\mathbf{x},y\rangle = |\mathbf{x},y \oplus f(\mathbf{x}) \rangle \end{math} where \begin{math} x \in \{0,1\}^n , y  \in \{0,1\} \end{math}.
+FIGURE1DEUTSCH
+Figure 1. Network representation of the oracle
+Thus the n control qubits stay unchanged and the additional qubit is used to save the result. So for example \begin{displaymath} U_f|101101\rangle \to |101100\rangle f(10110) = 1 \end{displaymath}.
+FIGURE2DEUTSCH
+Figure 2. Network representation of the Deutsch-Josza algorithm
+To run the algorithm, the register is initialized to the state \begin{math} |\mathbf{x},y\rangle = |\mathbf{0},1\rangle \end{math}, so all n control qubits are in state |0 \rangle and the target qubit is in state |1\rangle. A Hadamard gate is then applied to every single qubit and the new state is (see section 2.x for the n-qubit Hadamard transform)
+\begin{displaymath} \frac{1}{\sqrt{2^{n+1}}} \sum_{\{0,1\}^n} |\mathbf{x} \rangle \otimes (|0\rangle - |1\rangle) \end{displaymath}
+After applying the U_f gate this transforms to
+\begin{displaymath} \frac{1}{\sqrt{2^{n+1}}} \sum_{\{0,1\}^n} (-1)^{f(\mathbf{x})} |\mathbf{x} \rangle \otimes (|0\rangle - |1\rangle) \end{displaymath}
+Hadamard gates are then applied to the n control qubits - but not to the target qubit - leading to
+\begin{displaymath} \frac{1}{2^{n}} \sum_{\mathbf{x},\mathbf{z}\in\{0,1\}^n} (-1)^{f(\mathbf{x})\oplus (\mathbf{x} \cdot \mathbf{z})} |\mathbf{z} \rangle \otimes \frac{|0\rangle - |1\rangle}{\sqrt{2}} \end{displaymath}
+Now the amplitude of the state \begin{math} |\mathbf{z}\rangle = |\mathbf{0}\rangle \end{math} is 
+\begin{displaymath} \sum_{\mathbf{x} \in\{0,1\}^n} \frac{(-1)^{f(\mathbf{x})}}{2^n} \end{displaymath}
+So if the function is balanced the \begin{math} (-1)^{f(\mathbf}{x}} \end{math} terms will cancel each other and the amplitude of \begin{math} |mathbf{0}\rangle = |000…000\rangle \end{math} is zero. If the function is constant the terms will add up to \pm 1. Consequently a measurement of the n control qubits will yield whether the function in the oracle is constant or balanced. It is constant if the measurement yields 0 and balanced for any other number [1][3].
+Deutsch-Josza Algorithm – Implementation
+The algorithm is implemented using three classes: \emph{DeutschJoszaAlgorithm}, which contains the main algorithm set up; emph{DeutschJoszaOracle}, which is the quantum gate representing \begin{math} U_f \end{math} and contains the function; and \emph{DeutschJoszaOutput}, which contains the result, i.e. whether the function is constant or balanced.
+When creating the oracle, the user can decide whether to create a constant or a balanced function. There are several balanced functions implemented, but the code needs to be changed to access these, as one balanced function is enough to demonstrate the algorithm.
+The whole structure of the simulation is very close to the real implementation. Hadamard gates are applied to all qubits and then the \emph{DeutschJoszaOracle} gate (the transform \begin{math} U_f \end{math}) is applied to the whole register consisting of the n input qubits and the additional output qubit. Only one \emph{QRegister} containing n+1 qubits is used.
+The oracle gate uses direct bit manipulation and no matrix representation. The function \begin{math} f : \{0,1\}^n \to \{ 0,1 \} \end{math} is separated from the apply-method (which represents \begin{math} U_f \end{math}), so it can be easily changed.
+
+References:
+[1] R. Cleve, A. Ekert, C. Macchiavello and M. Mosca, Proc. R. Soc. London, Ser. A 454, 339 (1998).
+[2] Deutsch’s original paper (1985)
+[3] J. Stolze, D. Suter, Quantum Computing, Wiley-VCH, Weinheim (2008)

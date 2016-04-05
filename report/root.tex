@@ -1,0 +1,99 @@
+\documentclass{article}
+
+\usepackage[a4paper]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{color}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{float}
+\usepackage{setspace}
+
+\title{\Huge Simulation of a Quantum Computer}
+
+\author{Roshenac Mitchell \and Max Nolte \and Martin R\"{u}fenacht \and Mark Stringer \and Justs Zari\c{n}\u{s} }
+
+%new commands
+\newcommand{\ket}[1]{\left| #1 \right>}
+\newcommand{\bra}[1]{\left< #1 \right|}
+\newcommand{\braket}[2]{\left< #1 \vphantom{#2} \right|\left.\!\!\!\;#2 \vphantom{#1} \right>}
+
+\setlength{\topmargin}{0in}
+
+\begin{document}
+
+\maketitle
+
+\vfill
+
+\begin{onehalfspace}
+
+\begin{abstract}
+\input{abstract.tex}
+\end{abstract}
+
+\vspace{50mm}
+
+\begin{center}
+Junior Honours Computational Physics Project
+
+School of Physics and Astronomy, University of Edinburgh
+\end{center}
+
+\thispagestyle{empty}
+
+\clearpage
+
+\tableofcontents
+\thispagestyle{empty}
+
+\clearpage
+
+\setcounter{page}{1}
+
+\section{Introduction}
+\input{introduction.tex}
+
+\section{Theory}
+\subsection{Basics of Quantum Computation}
+\input{the_qc.tex}
+
+\subsection{Algorithms}
+\subsubsection{Deutsch-Jozsa Algorithm}
+\input{the_alg_deutsch.tex}
+\subsubsection{Grover's Algorithm}
+\input{the_alg_grover.tex}
+\subsubsection{Shor's Algorithm}
+\input{the_alg_shors.tex}
+
+\section{Implementation}
+\subsection{Design}
+\input{imp_design.tex}
+
+\subsection{Core}
+\input{imp_core.tex}
+
+\subsection{Operators}
+\input{imp_op.tex}
+
+\subsection{Algorithms}
+\subsubsection{Deutsch-Jozsa Algorithm}
+\input{imp_alg_deutsch.tex}
+\subsubsection{Grover's Algorithm}
+\input{imp_alg_grover.tex}
+\subsubsection{Shor's Algorithm}
+\input{imp_alg_shors.tex}
+
+\section{Discussion}
+\input{discussion.tex}
+
+\section{Conclusion}
+\input{conclusion.tex}
+\clearpage
+
+\end{onehalfspace}
+
+\bibliographystyle{unsrt}
+\bibliography{references}
+
+\end{document}
